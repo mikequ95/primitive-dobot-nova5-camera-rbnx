@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: MulanPSL-2.0
+name: Tests
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-22.04
+    env:
+      NOVA5_SUPPORT_SOURCE: git+https://github.com/mikequ95/nova5-support.git@v0.1.0
+      NOVA5_HARDWARE_SOURCE: git+https://github.com/mikequ95/primitive-dobot-nova5-arm-rbnx.git@v0.1.0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: syswonder/robonix
+          ref: e66e4abebd9c2cbb034015f5589592825d65f3df
+          path: .ci/robonix
+          submodules: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build Robonix CLI and codegen
+        run: |
+          cargo build --locked --manifest-path .ci/robonix/Cargo.toml -p robonix-cli -p robonix-codegen
+          echo "$GITHUB_WORKSPACE/.ci/robonix/target/debug" >> "$GITHUB_PATH"
+      - name: Build package with robonix-api[codegen]
+        run: |
+          rbnx setup "$GITHUB_WORKSPACE/.ci/robonix"
+          bash scripts/build.sh
+      - name: Run offline tests
+        run: |
+          PYTHONPATH="$PWD/rbnx-build/codegen/proto_gen:$PWD/rbnx-build/codegen/robonix_mcp_types" \
+            rbnx-build/venv/bin/python -m unittest discover -s tests -v

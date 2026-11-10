@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: MulanPSL-2.0
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nova5-wrist-rgb"
+version = "0.1.0"
+description = "Robonix wrist RGB primitive for a calibrated Nova5 and Orbbec camera."
+readme = "README.md"
+license = "MulanPSL-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.12,<3.13"
+dependencies = ["robonix-api==1.1.0", "nova5-support[camera]==0.1.0", "nova5-hardware==0.1.0"]
+
+[tool.setuptools.packages.find]
+include = ["wrist_rgb*"]

@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: MulanPSL-2.0
+manifestVersion: 1
+package:
+  name: robonix.primitive.dobot.nova5.camera
+  version: 0.1.0
+  description: Stationary Orbbec RGB snapshots paired with Nova5 feedback.
+  license: MulanPSL-2.0
+  tags: [primitive, camera, rgb, orbbec, dobot, nova5]
+  maintainers:
+    - Rui Ye <yerui@mails.neu.edu.cn>
+build: bash scripts/build.sh
+start: bash scripts/start.sh
+capabilities:
+  - name: robonix/primitive/camera/snapshot
+    transport: [grpc, mcp]
